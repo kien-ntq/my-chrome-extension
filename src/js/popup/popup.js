@@ -9,20 +9,20 @@ async function main(params) {
     console.log("Popup loaded!")
     dxSuite.populateTextBoxWithClipboardContent()
     forEachKeydownEvent(async ev => {
-        let processed = ""
-        processed = dxSuite.handleKeydownEvent(ev)
+        let processed = dxSuite.handleKeydownEvent(ev)
         if (!processed)
             processed = await handleKeydownBreakTabCommands(ev.key)
-        await lib.writeClipboard(processed)
+        
+        if (processed) {
+            await lib.writeClipboard(processed)
+        }
     })
+    injectContentScriptIntoCurrentTab()
+    listAllBrowserTabs()
 }
 
 function forEachKeydownEvent(fn) {
-    const evHdlr = function (ev) { fn(ev) }
-    document.addEventListener(
-        'keydown',
-        evHdlr
-    );
+    document.addEventListener('keydown', fn);
 }
 
 function handleKeydownClipboardTransformationCommands(ev) {
@@ -41,13 +41,42 @@ function handleKeydownClipboardTransformationCommands(ev) {
 
 async function handleKeydownBreakTabCommands(key) {
     switch (key) {
-        case "w":
+        case "w": {
             const tab = await lib.getCurrentTab()
             const newwindow = await chrome.windows.create({ tabId: tab.id })
             console.log(tab, newwindow);
             //chrome.tabs.move(tab.id, { windowId: newwindow.id })
             break
+        }
+        case "i": { break; }
     }
+}
+
+async function injectContentScriptIntoCurrentTab() {
+    const tab = await lib.getCurrentTab()
+    console.log(`Injecting script into tab ${tab.id}`)
+    
+    // Send a ping to see if the content script is already active
+    try {
+        const response = await chrome.tabs.sendMessage(tab.id, { type: "ping" });
+        if (response && response.type === "pong") {
+            console.info("Content script already injected and active.");
+            return;
+        }
+    } catch (e) {
+        // An error means the content script is not there, so we can inject it.
+        console.info("Content script not found, injecting now.", e);
+    }
+    
+    await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        files: ["js/content/content.js"],
+    });
+}
+
+async function listAllBrowserTabs() {
+    const tabs = await chrome.tabs.query({});
+    console.log("All browser tabs:", tabs);
 }
 
 main()

@@ -31,7 +31,7 @@ module.exports = (env, argv) => {
 	const htmlOptions = (name) => ({
 		template: `./src/${name}.html`,
 		filename: `${name}.html`,
-		chunks: [name],
+		chunks: [`${name}/${name}`],
 		minify: false,
         // create a timestamp that's injected into an HTML comment via the plugins
 		buildTime
@@ -40,9 +40,9 @@ module.exports = (env, argv) => {
         {
             ...baseConfig,
             entry: {
-				background: "./src/js/background/background.js",
-				popup: "./src/js/popup/popup.js",
-				content: "./src/js/content/content.js",
+				"background/background": "./src/js/background/background.js",
+				"popup/popup": "./src/js/popup/popup.js",
+				"content/content": "./src/js/content/content.js",
             },
             plugins: [
 				new CopyWebpackPlugin({
