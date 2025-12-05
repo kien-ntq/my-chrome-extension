@@ -1,4 +1,5 @@
 // content.js: content script
+import { ScrollTracker } from './ScrollTracker.js';
 
 /**
  * Main function for the content script.
@@ -6,27 +7,9 @@
  */
 function main() {
     console.log("Content script loaded!");
-    setupScrollListener();
+    const scrollTracker = new ScrollTracker();
+    scrollTracker.start();
     setupMessageListener();
-}
-
-/**
- * Handles scroll events and logs the current scroll position.
- */
-const scrollEventHandler = () => {
-    // The maximum scrollable height of the document can change, so we calculate it on each event.
-    const maxScrollY = document.documentElement.scrollHeight - window.innerHeight;
-    // window.scrollY gives the number of pixels the document is currently scrolled vertically.
-    console.log(`Page scrolled to: Y=${Math.round(window.scrollY)}px (out of ${Math.round(maxScrollY)}px)`);
-};
-
-/**
- * Sets up a scroll event listener on the document.
- */
-function setupScrollListener() {
-    console.log("Setting up scroll listener.");
-    // Use capture to listen for scroll events on any element.
-    document.addEventListener('scroll', scrollEventHandler, { capture: true, passive: true });
 }
 
 /**
