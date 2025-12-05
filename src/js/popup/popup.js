@@ -1,22 +1,28 @@
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import App from './App.jsx';
 import { lib } from './popup-lib.js';
 import { DxSuite } from './DxSuite.js';
 
-const clipboard_orig = document.getElementById("clipboard_orig")
-const clipboard_proc = document.getElementById("clipboard_proc")
-const dxSuite = new DxSuite(clipboard_orig, clipboard_proc)
+// const clipboard_orig = document.getElementById("clipboard_orig")
+// const clipboard_proc = document.getElementById("clipboard_proc")
+// const dxSuite = new DxSuite(clipboard_orig, clipboard_proc)
 
 async function main(params) {
     console.log("Popup loaded!")
-    dxSuite.populateTextBoxWithClipboardContent()
-    forEachKeydownEvent(async ev => {
-        let processed = dxSuite.handleKeydownEvent(ev)
-        if (!processed)
-            processed = await handleKeydownBreakTabCommands(ev.key)
-        
-        if (processed) {
-            await lib.writeClipboard(processed)
-        }
-    })
+    const root = createRoot(document.getElementById('root'));
+    root.render(<App />);
+
+    // dxSuite.populateTextBoxWithClipboardContent()
+    // forEachKeydownEvent(async ev => {
+    //     let processed = dxSuite.handleKeydownEvent(ev)
+    //     if (!processed)
+    //         processed = await handleKeydownBreakTabCommands(ev.key)
+    //     
+    //     if (processed) {
+    //         await lib.writeClipboard(processed)
+    //     }
+    // })
     injectContentScriptIntoCurrentTab()
     listAllBrowserTabs()
 }
@@ -70,7 +76,7 @@ async function injectContentScriptIntoCurrentTab() {
     
     await chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        files: ["js/content/content.js"],
+        files: ["js/content/ScrollTracker.js", "js/content/content.js"],
     });
 }
 

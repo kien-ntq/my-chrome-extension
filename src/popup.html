@@ -4,21 +4,13 @@
     <meta charset="UTF-8" />
   </head>
   <body style="width:300px"> <!-- style="width:780px; height:580px" -->
-    <!-- <script src="js/popup.js">This will be included by webpack!</script> -->
+    <!-- <script type="module" src="js/popup/popup.js">This will be included by webpack!</script> -->
     <h1>My web browsing Aide</h1>
     <input id="clipboard_orig" enabled="false" value="Reading clipboard..."></input>
     <input id="clipboard_proc" enabled="false" hint="Reading clipboard..."></input>
     <button id="unquote" value="1" title="Get content inside quotation mark.">Unquote</button>
-    <ul>
-      <li>Clipboard suite</li>
-      <ul>
-        <li>Press 1 to unquote</li>
-        <li>Press 2 to replace</li>
-        <li>Press 3 to copy task name (after >)</li>
-        <li>Press ] to extract inside bracket</li>
-      </ul>
-      <li>Press w to break tab</li>
-    </ul>
+  <div id="root"></div>
+
   </body>
 </html>
 

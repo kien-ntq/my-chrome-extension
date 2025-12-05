@@ -9,15 +9,16 @@ module.exports = (env, argv) => {
         resolve: {
 			alias: {
                 "@": resolve(__dirname, "src/js"),
-            }
+            },
+            extensions: [".js", ".jsx"],
         },
         module: {
 			rules: [
-				/* {
+				{
 					test: /\.(js|jsx)$/,
 					exclude: /node_modules/,
 					use: ["babel-loader"]
-				} */
+				}
 			]
 		},
     }
