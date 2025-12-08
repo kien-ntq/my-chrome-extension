@@ -1,8 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import TabList from './TabList.jsx';
+import { MessageTypes } from '../constants.js';
 
 const App = () => {
+    const [synchronizedTabIds, setSynchronizedTabIds] = useState([]);
+
+    useEffect(() => {
+        const messageListener = (message, sender, sendResponse) => {
+            if (message.type === MessageTypes.SYNCHRONIZE_GROUP_UPDATED) {
+                console.log('Received SYNCHRONIZE_GROUP_UPDATED:', message.payload);
+                setSynchronizedTabIds(message.payload.tabIds || []);
+            }
+        };
+        chrome.runtime.onMessage.addListener(messageListener);
+
+        return () => {
+            chrome.runtime.onMessage.removeListener(messageListener);
+        };
+    }, []);
+
     return (
-        <h1>Hello from React!</h1>
+        <>
+            <h1>Synchronized Tabs</h1>
+            <TabList tabIds={synchronizedTabIds} />
+        </>
     );
 };
 

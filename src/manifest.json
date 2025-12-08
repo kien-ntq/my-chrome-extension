@@ -19,8 +19,7 @@
   "permissions": [
     "activeTab",
     "scripting",
-    "clipboardRead",
-    "tabs"
+    "clipboardRead"
   ],
   "icons": {
     "16": "images/icon-16.png",

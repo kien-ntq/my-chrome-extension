@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import App from './App.jsx';
 import { lib } from './popup-lib.js';
 import { DxSuite } from './DxSuite.js';
+import { MessageTypes } from '../constants.js';
 
 // const clipboard_orig = document.getElementById("clipboard_orig")
 // const clipboard_proc = document.getElementById("clipboard_proc")
@@ -11,24 +12,22 @@ import { DxSuite } from './DxSuite.js';
 async function main(params) {
     console.log("Popup loaded!")
     const root = createRoot(document.getElementById('root'));
+
     root.render(<App />);
 
-    // dxSuite.populateTextBoxWithClipboardContent()
-    // forEachKeydownEvent(async ev => {
-    //     let processed = dxSuite.handleKeydownEvent(ev)
-    //     if (!processed)
-    //         processed = await handleKeydownBreakTabCommands(ev.key)
-    //     
-    //     if (processed) {
-    //         await lib.writeClipboard(processed)
-    //     }
-    // })
     injectContentScriptIntoCurrentTab()
-    listAllBrowserTabs()
+    setupKeydownListener()
 }
 
-function forEachKeydownEvent(fn) {
-    document.addEventListener('keydown', fn);
+async function setupKeydownListener() {
+    document.addEventListener('keydown', async (ev) => {
+        switch (ev.key) {
+        case "s": {
+            await scrollThisCommand(ev)
+            ev.preventDefault() // Prevent the default action of 's' key
+            break
+        }
+    }}) 
 }
 
 function handleKeydownClipboardTransformationCommands(ev) {
@@ -45,17 +44,16 @@ function handleKeydownClipboardTransformationCommands(ev) {
     }
 }
 
-async function handleKeydownBreakTabCommands(key) {
-    switch (key) {
-        case "w": {
-            const tab = await lib.getCurrentTab()
-            const newwindow = await chrome.windows.create({ tabId: tab.id })
-            console.log(tab, newwindow);
-            //chrome.tabs.move(tab.id, { windowId: newwindow.id })
-            break
-        }
-        case "i": { break; }
-    }
+async function scrollThisCommand(ev) {
+    const tab = await lib.getCurrentTab()
+    chrome.runtime.sendMessage({ type: MessageTypes.TOGGLE_SCROLL_THIS, payload: { tabId: tab.id } });
+}
+
+async function breakTab(ev) {
+    const tab = await lib.getCurrentTab()
+    const newwindow = await chrome.windows.create({ tabId: tab.id })
+    console.log(tab, newwindow);
+    //chrome.tabs.move(tab.id, { windowId: newwindow.id })
 }
 
 async function injectContentScriptIntoCurrentTab() {
@@ -64,8 +62,8 @@ async function injectContentScriptIntoCurrentTab() {
     
     // Send a ping to see if the content script is already active
     try {
-        const response = await chrome.tabs.sendMessage(tab.id, { type: "ping" });
-        if (response && response.type === "pong") {
+        const response = await chrome.tabs.sendMessage(tab.id, { type: MessageTypes.PING });
+        if (response && response.type === MessageTypes.PONG) {
             console.info("Content script already injected and active.");
             return;
         }
@@ -76,13 +74,8 @@ async function injectContentScriptIntoCurrentTab() {
     
     await chrome.scripting.executeScript({
         target: { tabId: tab.id },
-        files: ["js/content/ScrollTracker.js", "js/content/content.js"],
+        files: ["js/content/content.js"],
     });
-}
-
-async function listAllBrowserTabs() {
-    const tabs = await chrome.tabs.query({});
-    console.log("All browser tabs:", tabs);
 }
 
 main()
