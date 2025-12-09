@@ -1,4 +1,5 @@
 // ScrollTracker.js: A class to receive scroll events and calculate scroll distance.
+import { MessageTypes } from '../constants.js';
 
 export class ScrollTracker {
     constructor() {
@@ -16,7 +17,7 @@ export class ScrollTracker {
 
         if (distance !== 0) {
             chrome.runtime.sendMessage({
-                type: "scroll",
+                type: MessageTypes.SCROLL,
                 payload: {
                     scrollY: currentScrollY,
                     distance: distance

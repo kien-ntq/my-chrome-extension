@@ -1,5 +1,6 @@
 // content.js: content script
 import { ScrollTracker } from './ScrollTracker.js';
+import { MessageTypes } from '../constants.js';
 
 /**
  * Main function for the content script.
@@ -17,10 +18,10 @@ function main() {
  */
 function setupMessageListener() {
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-        if (message.type === "ping") {
+        if (message.type === MessageTypes.PING) {
             // Respond to the ping to confirm the script is active.
             console.log("Received ping, sending pong.");
-            sendResponse({ type: "pong" });
+            sendResponse({ type: MessageTypes.PONG });
         }
         // Return true to indicate you wish to send a response asynchronously
         return true;

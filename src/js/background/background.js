@@ -24,8 +24,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     console.log(`Tab ${sender.tab.id} ${direction}${Math.abs(Math.round(distance))}px@scrollY:${Math.round(scrollY)}px:`);
   } else if (message.type === MessageTypes.TOGGLE_SCROLL_THIS) {
     synchronizeGroup.toggle(message.payload.tabId);
-    console.log(`Received "${MessageTypes.TOGGLE_SCROLL_THIS}" command for tab ${message.payload.tabId}, synchronizationGroup=${synchronizeGroup.getTabIds().join(', ')}`);
+    console.log(`Received "${message.type}" command for tab ${message.payload.tabId}, synchronizationGroup=${synchronizeGroup.getTabIds().join(', ')}`);
     chrome.runtime.sendMessage({
+      type: MessageTypes.SYNCHRONIZE_GROUP_UPDATED,
+      payload: { tabIds: synchronizeGroup.getTabIds() }
+    });
+  } else if (message.type === MessageTypes.GET_SYNCHRONIZE_GROUP) {
+    console.log(`Received "${message.type}" command, responding with group.`);
+    sendResponse({
       type: MessageTypes.SYNCHRONIZE_GROUP_UPDATED,
       payload: { tabIds: synchronizeGroup.getTabIds() }
     });

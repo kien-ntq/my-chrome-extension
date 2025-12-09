@@ -6,6 +6,14 @@ const App = () => {
     const [synchronizedTabIds, setSynchronizedTabIds] = useState([]);
 
     useEffect(() => {
+        // Fetch initial synchronized group
+        chrome.runtime.sendMessage({ type: MessageTypes.GET_SYNCHRONIZE_GROUP }, (response) => {
+            if (response && response.payload.tabIds) {
+                console.log('Initial synchronized group:', response.payload.tabIds);
+                setSynchronizedTabIds(response.payload.tabIds);
+            }
+        });
+
         const messageListener = (message, sender, sendResponse) => {
             if (message.type === MessageTypes.SYNCHRONIZE_GROUP_UPDATED) {
                 console.log('Received SYNCHRONIZE_GROUP_UPDATED:', message.payload);
@@ -21,6 +29,7 @@ const App = () => {
 
     return (
         <>
+            <p>Press "s" to toggle scroll synchronization for the current tab.</p>
             <h1>Synchronized Tabs</h1>
             <TabList tabIds={synchronizedTabIds} />
         </>

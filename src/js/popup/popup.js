@@ -17,13 +17,14 @@ async function main(params) {
 
     injectContentScriptIntoCurrentTab()
     setupKeydownListener()
+    // getSynchronizeGroup() // Request the group state when the popup opens
 }
 
 async function setupKeydownListener() {
     document.addEventListener('keydown', async (ev) => {
         switch (ev.key) {
         case "s": {
-            await scrollThisCommand(ev)
+            await toggleScrollSyncForCurrentTab(ev)
             ev.preventDefault() // Prevent the default action of 's' key
             break
         }
@@ -44,9 +45,12 @@ function handleKeydownClipboardTransformationCommands(ev) {
     }
 }
 
-async function scrollThisCommand(ev) {
+async function toggleScrollSyncForCurrentTab(ev) {
     const tab = await lib.getCurrentTab()
-    chrome.runtime.sendMessage({ type: MessageTypes.TOGGLE_SCROLL_THIS, payload: { tabId: tab.id } });
+    chrome.runtime.sendMessage({
+        type: MessageTypes.TOGGLE_SCROLL_THIS,
+        payload: { tabId: tab.id }
+    });
 }
 
 async function breakTab(ev) {
@@ -54,6 +58,14 @@ async function breakTab(ev) {
     const newwindow = await chrome.windows.create({ tabId: tab.id })
     console.log(tab, newwindow);
     //chrome.tabs.move(tab.id, { windowId: newwindow.id })
+}
+
+async function getSynchronizeGroup() {
+    console.log("Requesting synchronize group from background script.");
+    const response = await chrome.runtime.sendMessage({
+        type: MessageTypes.GET_SYNCHRONIZE_GROUP
+    });
+    console.log("Received synchronize group:", response.payload.tabIds);
 }
 
 async function injectContentScriptIntoCurrentTab() {
