@@ -38,4 +38,12 @@ export class SynchronizeGroup {
     getTabIds() {
         return Array.from(this.tabs);
     }
+
+    /**
+     * Returns the count of tabs in the synchronization group.
+     * @returns {number}
+     */
+    countTabs() {
+        return this.tabs.size;
+    }
 }

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import TabList from './TabList.jsx';
 import { MessageTypes } from '../constants.js';
 
-const App = () => {
+const App = ({ keys }) => {
     const [synchronizedTabIds, setSynchronizedTabIds] = useState([]);
 
     useEffect(() => {
@@ -29,11 +29,24 @@ const App = () => {
 
     return (
         <>
-            <p>Press "s" to toggle scroll synchronization for the current tab.</p>
+            <KeyboardShortcuts keys={keys} />
             <h1>Synchronized Tabs</h1>
             <TabList tabIds={synchronizedTabIds} />
         </>
     );
 };
+
+const KeyboardShortcuts = ({ keys }) => (
+    <div>
+        <h2>Keyboard Shortcuts</h2>
+        <ul>
+            {Object.entries(keys).map(([key, description]) => (
+                <li key={key}>
+                    <kbd>{key}</kbd> - {description}
+                </li>
+            ))}
+        </ul>
+    </div>
+);
 
 export default App;

@@ -29,6 +29,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       type: MessageTypes.SYNCHRONIZE_GROUP_UPDATED,
       payload: { tabIds: synchronizeGroup.getTabIds() }
     });
+    const count = synchronizeGroup.countTabs(); chrome.action.setBadgeText({ text: count > 0 ? `${count}` : '' });
   } else if (message.type === MessageTypes.GET_SYNCHRONIZE_GROUP) {
     console.log(`Received "${message.type}" command, responding with group.`);
     sendResponse({

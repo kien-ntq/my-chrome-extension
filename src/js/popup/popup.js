@@ -9,11 +9,24 @@ import { MessageTypes } from '../constants.js';
 // const clipboard_proc = document.getElementById("clipboard_proc")
 // const dxSuite = new DxSuite(clipboard_orig, clipboard_proc)
 
+const Keys = {
+    's': {
+        description: "Toggle Scroll Sync",
+        func: toggleScrollSyncForCurrentTab,
+    },
+};
+
+function getKeyDescriptions(keys) {
+    return Object.fromEntries(
+        Object.entries(keys).map(([key, value]) => [key, value.description])
+    );
+}
+
 async function main(params) {
     console.log("Popup loaded!")
     const root = createRoot(document.getElementById('root'));
 
-    root.render(<App />);
+    root.render(<App keys={getKeyDescriptions(Keys)} />);
 
     injectContentScriptIntoCurrentTab()
     setupKeydownListener()
@@ -22,13 +35,11 @@ async function main(params) {
 
 async function setupKeydownListener() {
     document.addEventListener('keydown', async (ev) => {
-        switch (ev.key) {
-        case "s": {
-            await toggleScrollSyncForCurrentTab(ev)
-            ev.preventDefault() // Prevent the default action of 's' key
-            break
+        if (ev.key in Keys) {
+            Keys[ev.key].func()
+            ev.preventDefault() // Prevent the default action of the key
         }
-    }}) 
+    });
 }
 
 function handleKeydownClipboardTransformationCommands(ev) {
@@ -58,14 +69,6 @@ async function breakTab(ev) {
     const newwindow = await chrome.windows.create({ tabId: tab.id })
     console.log(tab, newwindow);
     //chrome.tabs.move(tab.id, { windowId: newwindow.id })
-}
-
-async function getSynchronizeGroup() {
-    console.log("Requesting synchronize group from background script.");
-    const response = await chrome.runtime.sendMessage({
-        type: MessageTypes.GET_SYNCHRONIZE_GROUP
-    });
-    console.log("Received synchronize group:", response.payload.tabIds);
 }
 
 async function injectContentScriptIntoCurrentTab() {
