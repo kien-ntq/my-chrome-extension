@@ -4,7 +4,7 @@
   "description": "My web browsing Aide, like Sync scroll by distance rather than percentage.",
   "main": "webpack.config.js",
   "scripts": {
-    "test": "jest .",
+    "test": "jest",
     "dev": "webpack --watch"
   },
   "keywords": [
