@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 
 /**
  * A component that fetches and displays information about a list of tabs.
- * @param {{tabIds: number[]}} props - The props object.
+ * @param {{tabIds: number[], mode: string}} props - The props object.
  * @param {number[]} props.tabIds - An array of tab IDs to display.
+ * @param {string} props.mode - The current mode.
  */
-const TabList = ({ tabIds }) => {
+const TabList = ({ tabIds, mode }) => {
     const [tabs, setTabs] = useState([]);
 
     useEffect(() => {
@@ -28,13 +29,16 @@ const TabList = ({ tabIds }) => {
     }, [tabIds]); // Re-run the effect if the tabIds prop changes
 
     return (
-        <ul>
-            {tabs.map(tab => (
-                <li key={tab.id} title={tab.url}>
-                    <img src={tab.favIconUrl} alt="" width="16" height="16" /> {tab.title}
-                </li>
-            ))}
-        </ul>
+        <>
+            <h1 id='mode-indicator'>{mode}</h1>
+            <ul>
+                {tabs.map(tab => (
+                    <li key={tab.id} title={tab.url}>
+                        <img src={tab.favIconUrl} alt="" width="16" height="16" /> {tab.title}
+                    </li>
+                ))}
+            </ul>
+        </>
     );
 };
 

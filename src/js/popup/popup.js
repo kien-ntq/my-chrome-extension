@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.jsx';
 import { lib } from './popup-lib.js';
@@ -8,13 +8,6 @@ import { MessageTypes } from '../constants.js';
 // const clipboard_orig = document.getElementById("clipboard_orig")
 // const clipboard_proc = document.getElementById("clipboard_proc")
 // const dxSuite = new DxSuite(clipboard_orig, clipboard_proc)
-
-const Keys = {
-    's': {
-        description: "Toggle Scroll Sync",
-        func: toggleScrollSyncForCurrentTab,
-    },
-};
 
 function getKeyDescriptions(keys) {
     return Object.fromEntries(
@@ -26,7 +19,7 @@ async function main(params) {
     console.log("Popup loaded!")
     const root = createRoot(document.getElementById('root'));
 
-    root.render(<App keys={getKeyDescriptions(Keys)} />);
+    root.render(<App />);
 
     injectContentScriptIntoCurrentTab()
     setupKeydownListener()
@@ -62,6 +55,10 @@ async function toggleScrollSyncForCurrentTab(ev) {
         type: MessageTypes.TOGGLE_SCROLL_THIS,
         payload: { tabId: tab.id }
     });
+}
+
+async function switchToRecentTabsMode(ev) {
+    setMode('Recent Tabs Mode');
 }
 
 async function breakTab(ev) {

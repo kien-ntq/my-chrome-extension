@@ -2,7 +2,19 @@ import React, { useState, useEffect } from 'react';
 import TabList from './TabList.jsx';
 import { MessageTypes } from '../constants.js';
 
-const App = ({ keys }) => {
+const Keys = {
+    's': {
+        description: "Toggle Scroll Sync",
+        func: toggleScrollSyncForCurrentTab,
+    },
+    't': {
+        description: "Recent Tabs",
+        func: switchToRecentTabsMode,
+    },
+};
+
+const App = () => {
+    const [mode, setMode] = useState('Synchronized Tabs');
     const [synchronizedTabIds, setSynchronizedTabIds] = useState([]);
 
     useEffect(() => {
@@ -29,9 +41,9 @@ const App = ({ keys }) => {
 
     return (
         <>
-            <KeyboardShortcuts keys={keys} />
+            <KeyboardShortcuts keys={Keys} />
             <h1>Synchronized Tabs</h1>
-            <TabList tabIds={synchronizedTabIds} />
+            <TabList mode={mode} tabIds={synchronizedTabIds} />
         </>
     );
 };
@@ -40,9 +52,9 @@ const KeyboardShortcuts = ({ keys }) => (
     <div>
         <h2>Keyboard Shortcuts</h2>
         <ul>
-            {Object.entries(keys).map(([key, description]) => (
+            {Object.entries(keys).map(([key, data]) => (
                 <li key={key}>
-                    <kbd>{key}</kbd> - {description}
+                    <kbd>{key}</kbd> - {data.description}
                 </li>
             ))}
         </ul>

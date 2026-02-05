@@ -28,6 +28,15 @@ export default async function () {
   );
   let worker = await workerTarget.worker();
   globalThis.__WORKER_GLOBAL__ = worker;
+  async function openPopup() {
+    await globalThis.__WORKER_GLOBAL__.evaluate('chrome.action.openPopup();');
+    const popupTarget = await globalThis.__BROWSER_GLOBAL__.waitForTarget(
+      target => target.type() === 'page' && target.url().endsWith('popup.html'),
+    );
+    return await popupTarget.asPage();
+  }
+  let popupPage = await openPopup();
+  globalThis.__PPAGE_GLOBAL__ = popupPage;
   // use the file system to expose the wsEndpoint for TestEnvironments
   await mkdir(DIR, {recursive: true});
   //await writeFile(join(DIR, 'wsEndpoint'), browser.wsEndpoint());
