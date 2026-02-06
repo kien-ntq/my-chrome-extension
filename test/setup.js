@@ -36,6 +36,10 @@ export default async function () {
     return await popupTarget.asPage();
   }
   let popupPage = await openPopup();
+  popupPage.on('console', msg => console.log('PAGE LOG:', msg.text()));
+  popupPage.on('pageerror', function (err) {
+    console.log(err);
+  });
   globalThis.__PPAGE_GLOBAL__ = popupPage;
   // use the file system to expose the wsEndpoint for TestEnvironments
   await mkdir(DIR, {recursive: true});

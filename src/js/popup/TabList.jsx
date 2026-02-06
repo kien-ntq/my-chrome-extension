@@ -30,7 +30,6 @@ const TabList = ({ tabIds, mode }) => {
 
     return (
         <>
-            <h1 id='mode-indicator'>{mode}</h1>
             <ul>
                 {tabs.map(tab => (
                     <li key={tab.id} title={tab.url}>

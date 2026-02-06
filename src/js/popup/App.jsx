@@ -2,18 +2,18 @@ import React, { useState, useEffect } from 'react';
 import TabList from './TabList.jsx';
 import { MessageTypes } from '../constants.js';
 
-const Keys = {
-    's': {
-        description: "Toggle Scroll Sync",
-        func: toggleScrollSyncForCurrentTab,
-    },
-    't': {
-        description: "Recent Tabs",
-        func: switchToRecentTabsMode,
-    },
-};
-
 const App = () => {
+    const Keys = {
+        's': {
+            description: "Toggle Scroll Sync",
+            func: toggleScrollSyncForCurrentTab,
+        },
+        't': {
+            description: "Recent Tabs",
+            func: switchToRecentTabsMode,
+        },
+    };
+
     const [mode, setMode] = useState('Synchronized Tabs');
     const [synchronizedTabIds, setSynchronizedTabIds] = useState([]);
 
@@ -33,16 +33,21 @@ const App = () => {
             }
         };
         chrome.runtime.onMessage.addListener(messageListener);
+        setupKeydownListener(Keys)
 
         return () => {
             chrome.runtime.onMessage.removeListener(messageListener);
         };
     }, []);
 
+    function switchToRecentTabsMode(ev) {
+        setMode('Recent Tabs Mode');
+    }
+
     return (
         <>
             <KeyboardShortcuts keys={Keys} />
-            <h1>Synchronized Tabs</h1>
+            <h1 id='mode-indicator'>{mode}</h1>
             <TabList mode={mode} tabIds={synchronizedTabIds} />
         </>
     );
@@ -60,5 +65,18 @@ const KeyboardShortcuts = ({ keys }) => (
         </ul>
     </div>
 );
+
+function toggleScrollSyncForCurrentTab(ev) {
+    throw new Error('Function not implemented.');
+}
+
+async function setupKeydownListener(Keys) {
+    document.addEventListener('keydown', async (ev) => {
+        if (ev.key in Keys) {
+            Keys[ev.key].func()
+            ev.preventDefault() // Prevent the default action of the key
+        }
+    });
+}
 
 export default App;

@@ -22,17 +22,7 @@ async function main(params) {
     root.render(<App />);
 
     injectContentScriptIntoCurrentTab()
-    setupKeydownListener()
     // getSynchronizeGroup() // Request the group state when the popup opens
-}
-
-async function setupKeydownListener() {
-    document.addEventListener('keydown', async (ev) => {
-        if (ev.key in Keys) {
-            Keys[ev.key].func()
-            ev.preventDefault() // Prevent the default action of the key
-        }
-    });
 }
 
 function handleKeydownClipboardTransformationCommands(ev) {
