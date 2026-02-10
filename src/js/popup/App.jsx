@@ -48,7 +48,7 @@ const App = () => {
         <>
             <KeyboardShortcuts keys={Keys} />
             <h1 id='mode-indicator'>{mode}</h1>
-            <TabList mode={mode} tabIds={synchronizedTabIds} />
+            <TabList tabIds={mode == 'Recent Tabs Mode' ? [] : synchronizedTabIds} />
         </>
     );
 };

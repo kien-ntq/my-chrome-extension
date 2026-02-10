@@ -27,20 +27,21 @@ export default async function () {
       target.url().endsWith('background.js'),
   );
   let worker = await workerTarget.worker();
-  globalThis.__WORKER_GLOBAL__ = worker;
+  globalThis.__EXTENSION_GLOBAL__ = {};
+  globalThis.__EXTENSION_GLOBAL__.worker = worker;
   async function openPopup() {
-    await globalThis.__WORKER_GLOBAL__.evaluate('chrome.action.openPopup();');
+    await globalThis.__EXTENSION_GLOBAL__.worker.evaluate('chrome.action.openPopup();');
     const popupTarget = await globalThis.__BROWSER_GLOBAL__.waitForTarget(
       target => target.type() === 'page' && target.url().endsWith('popup.html'),
     );
-    return await popupTarget.asPage();
+    let popupPage = await popupTarget.asPage();
+    popupPage.on('console', msg => console.log('PAGE LOG:', msg.text()));
+    popupPage.on('pageerror', function (err) {
+      console.log(err);
+    });
+    return popupPage;
   }
-  let popupPage = await openPopup();
-  popupPage.on('console', msg => console.log('PAGE LOG:', msg.text()));
-  popupPage.on('pageerror', function (err) {
-    console.log(err);
-  });
-  globalThis.__PPAGE_GLOBAL__ = popupPage;
+  globalThis.__EXTENSION_GLOBAL__.openPopup = openPopup;
   // use the file system to expose the wsEndpoint for TestEnvironments
   await mkdir(DIR, {recursive: true});
   //await writeFile(join(DIR, 'wsEndpoint'), browser.wsEndpoint());

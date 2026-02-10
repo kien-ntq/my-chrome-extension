@@ -15,6 +15,13 @@
             "request": "launch",
             "command": "npm run test ${file}",
             "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "node-terminal",
+            "name": "Run Script: test recentTabs",
+            "request": "launch",
+            "command": "npm run test recentTabs.test.js",
+            "cwd": "${workspaceFolder}"
         }
     ]
 }

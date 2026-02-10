@@ -6,7 +6,7 @@ import React, { useState, useEffect } from 'react';
  * @param {number[]} props.tabIds - An array of tab IDs to display.
  * @param {string} props.mode - The current mode.
  */
-const TabList = ({ tabIds, mode }) => {
+const TabList = ({ tabIds }) => {
     const [tabs, setTabs] = useState([]);
 
     useEffect(() => {
@@ -30,7 +30,7 @@ const TabList = ({ tabIds, mode }) => {
 
     return (
         <>
-            <ul>
+            <ul id='recent-tabs-list'>
                 {tabs.map(tab => (
                     <li key={tab.id} title={tab.url}>
                         <img src={tab.favIconUrl} alt="" width="16" height="16" /> {tab.title}

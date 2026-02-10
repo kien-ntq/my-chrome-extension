@@ -1,6 +1,7 @@
 import { expect } from "@playwright/test";
 
 describe('Recent Tabs Mode', () => {
+  let extensionGlobal = globalThis.__EXTENSION_GLOBAL__;
   let popupPage;
   let browser = globalThis.__BROWSER_GLOBAL__;
 
@@ -14,17 +15,17 @@ describe('Recent Tabs Mode', () => {
   }
 
   beforeAll(async () => {
-    popupPage = globalThis.__PPAGE_GLOBAL__;
-    await popupPage.reload();
   });
 
   it('should switch to recent tabs mode when I press [T]', async () => {
+    popupPage = await extensionGlobal.openPopup();
+    // await popupPage.reload();
     expect(await currentMode()).not.toBe('Recent Tabs Mode');
     await typeT();
     expect(await currentMode()).toBe('Recent Tabs Mode');
   });
 
-  it('should show recent tabs when in recent tabs mode', async () => {
+  it('should show recent tabs', async () => {
     function examplePageContent(pageName) {
       return `<html><head><title>${pageName}</title></head><body><h1>${pageName}</h1></body></html>`
     }
@@ -33,8 +34,9 @@ describe('Recent Tabs Mode', () => {
       await newPage.setContent(content);
       return newPage;
     }
-    newPageWithContent(examplePageContent('Page 1'));
-    newPageWithContent(examplePageContent('Page 2'));
+    await newPageWithContent(examplePageContent('Page 1'));
+    await newPageWithContent(examplePageContent('Page 2'));
+    popupPage = await extensionGlobal.openPopup();
     await typeT();
     async function recentTabsContains(content) {
       return await popupPage.$eval('#recent-tabs-list', el =>
