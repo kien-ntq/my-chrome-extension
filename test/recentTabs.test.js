@@ -1,4 +1,4 @@
-import { expect } from "@playwright/test";
+const testHelper = require('./testHelper');
 
 describe('Recent Tabs Mode', () => {
   let extensionGlobal = globalThis.__EXTENSION_GLOBAL__;
@@ -15,10 +15,13 @@ describe('Recent Tabs Mode', () => {
   }
 
   beforeAll(async () => {
+    await testHelper.setupPuppeteer();
+    browser = globalThis.__BROWSER_GLOBAL__;
+    extensionGlobal = globalThis.__EXTENSION_GLOBAL__;
   });
 
   it('should switch to recent tabs mode when I press [T]', async () => {
-    popupPage = await extensionGlobal.openPopup();
+    //popupPage = await extensionGlobal.openPopup();
     // await popupPage.reload();
     expect(await currentMode()).not.toBe('Recent Tabs Mode');
     await typeT();
@@ -48,7 +51,7 @@ describe('Recent Tabs Mode', () => {
   });
 
   afterAll(async () => {
-    //await popupPage.close();
+    await testHelper.teardownPuppeteer();
   });
 });
 
