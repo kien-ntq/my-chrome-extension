@@ -14,14 +14,14 @@ describe('Recent Tabs Mode', () => {
     return activeMode;
   }
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     await testHelper.setupPuppeteer();
     browser = globalThis.__BROWSER_GLOBAL__;
     extensionGlobal = globalThis.__EXTENSION_GLOBAL__;
   });
 
   it('should switch to recent tabs mode when I press [T]', async () => {
-    //popupPage = await extensionGlobal.openPopup();
+    popupPage = await extensionGlobal.openPopup();
     // await popupPage.reload();
     expect(await currentMode()).not.toBe('Recent Tabs Mode');
     await typeT();
@@ -50,7 +50,7 @@ describe('Recent Tabs Mode', () => {
     expect(await recentTabsContains('Page 2')).toBe(true);
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
     await testHelper.teardownPuppeteer();
   });
 });
