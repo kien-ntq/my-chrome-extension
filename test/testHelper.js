@@ -34,9 +34,9 @@ const testHelper = {
             );
             let popupPage = await popupTarget.asPage();
             popupPage.on('console', msg => console.log('PAGE LOG:', msg.text()));
-            popupPage.on('pageerror', function (err) {
+            /* popupPage.on('pageerror', function (err) {
                 console.log(err);
-            });
+            }); */
             return popupPage;
         }
         globalThis.__EXTENSION_GLOBAL__.openPopup = openPopup;
@@ -53,6 +53,10 @@ const testHelper = {
 
         // clean-up the wsEndpoint file
         //await fs.rm(DIR, { recursive: true, force: true });
+    },
+
+    sleep: function (ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 };
 

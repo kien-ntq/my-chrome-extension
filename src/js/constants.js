@@ -4,5 +4,7 @@ export const MessageTypes = {
     PING: 'ping',
     PONG: 'pong',
     SYNCHRONIZE_GROUP_UPDATED: 'synchronize group updated',
-    GET_SYNCHRONIZE_GROUP: 'get synchronize group'
+    GET_SYNCHRONIZE_GROUP: 'get synchronize group',
+    GET_RECENT_TABS: 'get recent tabs',
+    RECENT_TABS_UPDATED: 'recent tabs updated',
 };

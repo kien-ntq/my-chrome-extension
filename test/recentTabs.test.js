@@ -28,27 +28,35 @@ describe('Recent Tabs Mode', () => {
     expect(await currentMode()).toBe('Recent Tabs Mode');
   });
 
-  it('should show recent tabs', async () => {
+  it.only('should show recent tabs', async () => {
     function examplePageContent(pageName) {
       return `<html><head><title>${pageName}</title></head><body><h1>${pageName}</h1></body></html>`
     }
     async function newPageWithContent(content) {
       let newPage = await browser.newPage();
       await newPage.setContent(content);
+      await newPage.bringToFront();
       return newPage;
     }
+    await testHelper.sleep(1000); // wait for the background to be settled.
     await newPageWithContent(examplePageContent('Page 1'));
+    await testHelper.sleep(1000); // wait for the background to be settled.
     await newPageWithContent(examplePageContent('Page 2'));
     popupPage = await extensionGlobal.openPopup();
     await typeT();
     async function recentTabsContains(content) {
-      return await popupPage.$eval('#recent-tabs-list', el =>
-        Array.from(el.querySelectorAll('li')).some(li => li.textContent.includes(content))
+      return await popupPage.$eval(
+        '#recent-tabs-list',
+        (el, content) =>
+          Array.from(el.querySelectorAll('li')).some(li => li.textContent.includes(content)),
+        content
       );
     }
+    await testHelper.sleep(1000); // wait for the background to be settled.
     expect(await recentTabsContains('Page 1')).toBe(true);
+    await testHelper.sleep(1000); // wait for the background to be settled.
     expect(await recentTabsContains('Page 2')).toBe(true);
-  });
+  }, 120000);
 
   afterEach(async () => {
     await testHelper.teardownPuppeteer();

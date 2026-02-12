@@ -1,4 +1,4 @@
-import { State } from './utils.js';
+import { State } from './State.js';
 import { SynchronizeGroup } from './SynchronizeGroup.js';
 import { MessageTypes } from '../constants.js';
 
@@ -9,12 +9,19 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 const synchronizeGroup = new SynchronizeGroup();
+const recentTabIds = [];
+
+/* chrome.tabs.onCreated.addListener((tab) => {
+  console.log(`Tab ${tab.id} created.`);
+  recentTabIds.unshift(tab.id);
+}); */
 
 chrome.tabs.onActivated.addListener(async (activeInfo) => {
   // Get the current tab's state
   const tab = await chrome.tabs.get(activeInfo.tabId);
   const state = await new State(tab).load();
   console.log(`Tab ${tab.id} activated. State: ${state.prev}`);
+  recentTabIds.unshift(tab.id);
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -35,6 +42,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     sendResponse({
       type: MessageTypes.SYNCHRONIZE_GROUP_UPDATED,
       payload: { tabIds: synchronizeGroup.getTabIds() }
+    });
+  } else if (message.type === MessageTypes.GET_RECENT_TABS) {
+    console.log(`Received "${message.type}" command, responding with recent tabs.`);
+    sendResponse({
+      type: MessageTypes.RECENT_TABS_UPDATED,
+      payload: { tabIds: recentTabIds }
     });
   }
   // Return true to indicate you might send a response asynchronously.

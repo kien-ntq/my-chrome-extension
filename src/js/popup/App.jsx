@@ -16,6 +16,7 @@ const App = () => {
 
     const [mode, setMode] = useState('Synchronized Tabs');
     const [synchronizedTabIds, setSynchronizedTabIds] = useState([]);
+    const [recentTabIds, setRecentTabIds] = useState([]);
 
     useEffect(() => {
         // Fetch initial synchronized group
@@ -25,11 +26,21 @@ const App = () => {
                 setSynchronizedTabIds(response.payload.tabIds);
             }
         });
+        chrome.runtime.sendMessage({ type: MessageTypes.GET_RECENT_TABS }, (response) => {
+            if (response && response.payload.tabIds) {
+                console.log('Initial recent tabs:', response.payload.tabIds);
+                setRecentTabIds(response.payload.tabIds);
+            }
+        });
 
         const messageListener = (message, sender, sendResponse) => {
             if (message.type === MessageTypes.SYNCHRONIZE_GROUP_UPDATED) {
                 console.log('Received SYNCHRONIZE_GROUP_UPDATED:', message.payload);
                 setSynchronizedTabIds(message.payload.tabIds || []);
+            }
+            if (message.type === MessageTypes.RECENT_TABS_UPDATED) {
+                console.log('Received RECENT_TABS_UPDATED:', message.payload);
+                setRecentTabIds(message.payload.tabIds || []);
             }
         };
         chrome.runtime.onMessage.addListener(messageListener);
@@ -48,7 +59,7 @@ const App = () => {
         <>
             <KeyboardShortcuts keys={Keys} />
             <h1 id='mode-indicator'>{mode}</h1>
-            <TabList tabIds={mode == 'Recent Tabs Mode' ? [] : synchronizedTabIds} />
+            <TabList tabIds={mode == 'Recent Tabs Mode' ? recentTabIds : synchronizedTabIds} />
         </>
     );
 };
