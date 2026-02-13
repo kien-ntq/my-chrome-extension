@@ -5,6 +5,7 @@ export class BackgroundImpl {
     }
 
     onMessage(message) {
+        console.log("BackgroundImpl received message:", message);
         if (message.type === 'TAB_ACTIVATED') {
             this._tabActivated(message.payload);
         }

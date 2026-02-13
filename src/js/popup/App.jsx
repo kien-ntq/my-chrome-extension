@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import TabList from './TabList.jsx';
 import { MessageTypes } from '../constants.js';
-import { Messenger } from '../src/js/Messenger.js';
+import { Messenger } from '../Messenger.js';
+import { ChromeAPI } from '../ChromeAPI.js';
 
 const App = () => {
     const Keys = {
@@ -19,38 +20,16 @@ const App = () => {
     const [synchronizedTabIds, setSynchronizedTabIds] = useState([]);
     const [recentTabIds, setRecentTabIds] = useState([]);
 
-    useEffect(async () => {
-        const messenger = new Messenger();
-        // Fetch initial synchronized group
-        chrome.runtime.sendMessage({ type: MessageTypes.GET_SYNCHRONIZE_GROUP }, (response) => {
-            if (response && response.payload.tabIds) {
-                console.log('Initial synchronized group:', response.payload.tabIds);
-            }
-        });
-        setSynchronizedTabIds(await messenger.getRecentTabsFromBackground());
-        chrome.runtime.sendMessage({ type: MessageTypes.GET_RECENT_TABS }, (response) => {
-            if (response && response.payload.tabIds) {
-                console.log('Initial recent tabs:', response.payload.tabIds);
-                setRecentTabIds(response.payload.tabIds);
-            }
-        });
-
-        const messageListener = (message, sender, sendResponse) => {
-            if (message.type === MessageTypes.SYNCHRONIZE_GROUP_UPDATED) {
-                console.log('Received SYNCHRONIZE_GROUP_UPDATED:', message.payload);
-                setSynchronizedTabIds(message.payload.tabIds || []);
-            }
-            if (message.type === MessageTypes.RECENT_TABS_UPDATED) {
-                console.log('Received RECENT_TABS_UPDATED:', message.payload);
-                setRecentTabIds(message.payload.tabIds || []);
-            }
-        };
-        chrome.runtime.onMessage.addListener(messageListener);
+    useEffect(() => {
+        (async function () {
+            const messenger = new Messenger(ChromeAPI);
+            // Fetch initial synchronized group
+            setSynchronizedTabIds(await messenger.getSynchronizeGroupFromBackground());
+            setRecentTabIds(await messenger.getRecentTabsFromBackground());
+        })()
         setupKeydownListener(Keys)
 
-        return () => {
-            chrome.runtime.onMessage.removeListener(messageListener);
-        };
+        return () => { };
     }, []);
 
     function switchToRecentTabsMode(ev) {
