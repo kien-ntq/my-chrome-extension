@@ -5,31 +5,33 @@ export class Messenger {
         this.chromeAPI = chromeAPI;
     }
 
-    /** Assuming only background.js is responding to GET_RECENT_TABS. */
-    async getRecentTabsFromBackground() {
+
+    /**
+     * Helper to send a message and resolve with tabIds or reject on error.
+     * @param {string} type - The message type to send.
+     * @param {string} logPrefix - Prefix for console log.
+     * @returns {Promise<Array>} Resolves with tabIds array.
+     */
+    async _getTabIdsFromBackground(type, logPrefix) {
         return await new Promise((resolve, reject) => {
-            this.chromeAPI.sendMessageWithCallback({ type: "GET_RECENT_TABS" }, (response) => {
+            this.chromeAPI.sendMessageWithCallback({ type }, (response) => {
                 if (response && response.tabIds) {
-                    console.log('Recent tabs from background:', response.tabIds);
+                    console.log(`${logPrefix} from background:`, response.tabIds);
                     resolve(response.tabIds);
                 } else {
-                    return reject("No response or tabIds");
+                    reject("No response or tabIds");
                 }
             });
         });
     }
 
+    /** Assuming only background.js is responding to GET_RECENT_TABS. */
+    async getRecentTabsFromBackground() {
+        return this._getTabIdsFromBackground("GET_RECENT_TABS", "Recent tabs");
+    }
+
     async getSynchronizeGroupFromBackground() {
-        return await new Promise((resolve, reject) => {
-            this.chromeAPI.sendMessageWithCallback({ type: "GET_SYNCHRONIZE_GROUP" }, (response) => {
-                if (response && response.tabIds) {
-                    console.log('Synchronize group from background:', response.tabIds);
-                    resolve(response.tabIds);
-                } else {
-                    return reject("No response or tabIds");
-                }
-            });
-        });
+        return this._getTabIdsFromBackground("GET_SYNCHRONIZE_GROUP", "Synchronize group");
     }
 
 }

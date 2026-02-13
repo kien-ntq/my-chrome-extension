@@ -18,9 +18,9 @@
         },
         {
             "type": "node-terminal",
-            "name": "Run Script: test recentTabs",
+            "name": "Run Script: unit test",
             "request": "launch",
-            "command": "npm run test recentTabs.test.js",
+            "command": "npm run unit",
             "cwd": "${workspaceFolder}"
         }
     ]

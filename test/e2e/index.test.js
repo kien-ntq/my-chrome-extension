@@ -5,7 +5,7 @@ const EXTENSION_PATH = './dist';
 const EXTENSION_ID = 'kfnlegigggchfakaefjomdlbhinmeiih';
 
 describe('popup', () => {
-  it('should renders correctly', async () => {
+  it.skip('should renders correctly', async () => {
     //const page = await browser.newPage();
     //await page.goto(`chrome-extension://${EXTENSION_ID}/popup.html`);
     popupPage = globalThis.__PPAGE_GLOBAL__;

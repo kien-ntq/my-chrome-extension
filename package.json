@@ -5,6 +5,8 @@
   "main": "webpack.config.js",
   "scripts": {
     "test": "jest",
+    "unit": "jest ./test/unit",
+    "e2e": "jest ./test/e2e",
     "dev": "webpack --watch"
   },
   "keywords": [

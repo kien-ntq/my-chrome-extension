@@ -11,4 +11,11 @@ export class BackgroundState {
     getRecentTabIds() {
         return this.recentTabIds;
     }
+
+    onMessage(message, sendResponse) {
+        if (message.type === 'GET_RECENT_TABS') {
+            sendResponse({ tabIds: this.getRecentTabIds() });
+        }
+    }
+
 };
