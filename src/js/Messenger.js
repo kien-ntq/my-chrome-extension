@@ -19,4 +19,17 @@ export class Messenger {
         });
     }
 
+    async getSynchronizeGroupFromBackground() {
+        return await new Promise((resolve, reject) => {
+            this.chromeAPI.sendMessageWithCallback({ type: "GET_SYNCHRONIZE_GROUP" }, (response) => {
+                if (response && response.tabIds) {
+                    console.log('Synchronize group from background:', response.tabIds);
+                    resolve(response.tabIds);
+                } else {
+                    return reject("No response or tabIds");
+                }
+            });
+        });
+    }
+
 }

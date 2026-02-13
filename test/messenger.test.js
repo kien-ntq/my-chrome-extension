@@ -9,11 +9,14 @@ describe('Messenger', () => {
         backgroundState = new BackgroundState();
     });
 
+    const mockMessages = {
+        GET_RECENT_TABS: { tabIds: [1, 2, 3] },
+        GET_SYNCHRONIZE_GROUP: { tabIds: [1, 3] }
+    };
+
     const chromeAPI = {
         sendMessageWithCallback: (message, callback) => {
-            if (message.type === "GET_RECENT_TABS") {
-                callback({ tabIds: [1, 2, 3] });
-            }
+            callback(mockMessages[message.type]);
         }
     }
 
@@ -21,5 +24,11 @@ describe('Messenger', () => {
         messenger = new Messenger(chromeAPI);
         const recentTabs = await messenger.getRecentTabsFromBackground();
         expect(recentTabs).toEqual([1, 2, 3]);
+    });
+
+    it('Should be able to getSynchronizeGroup', async () => {
+        messenger = new Messenger(chromeAPI);
+        const synchronizeGroup = await messenger.getSynchronizeGroupFromBackground();
+        expect(synchronizeGroup).toEqual([1, 3]);
     });
 });
