@@ -1,6 +1,6 @@
 describe('Messenger', () => {
     const { Messenger } = require('../../src/js/Messenger.js');
-    const { BackgroundState } = require('../../src/js/background/BackgroundState.js');
+    const { BackgroundState } = require('../../src/js/background/BackgroundImpl.js');
     const { ChromeAPI } = require('../../src/js/ChromeAPI.js');
     let messenger;
     let backgroundState;
