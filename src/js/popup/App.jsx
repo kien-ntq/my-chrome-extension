@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import TabList from './TabList.jsx';
 import { MessageTypes } from '../constants.js';
+import { Messenger } from '../src/js/Messenger.js';
 
 const App = () => {
     const Keys = {
@@ -18,14 +19,15 @@ const App = () => {
     const [synchronizedTabIds, setSynchronizedTabIds] = useState([]);
     const [recentTabIds, setRecentTabIds] = useState([]);
 
-    useEffect(() => {
+    useEffect(async () => {
+        const messenger = new Messenger();
         // Fetch initial synchronized group
         chrome.runtime.sendMessage({ type: MessageTypes.GET_SYNCHRONIZE_GROUP }, (response) => {
             if (response && response.payload.tabIds) {
                 console.log('Initial synchronized group:', response.payload.tabIds);
-                setSynchronizedTabIds(response.payload.tabIds);
             }
         });
+        setSynchronizedTabIds(await messenger.getRecentTabsFromBackground());
         chrome.runtime.sendMessage({ type: MessageTypes.GET_RECENT_TABS }, (response) => {
             if (response && response.payload.tabIds) {
                 console.log('Initial recent tabs:', response.payload.tabIds);
